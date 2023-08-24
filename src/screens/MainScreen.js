@@ -1,26 +1,17 @@
 import { useEffect } from "react";
-import { View, StyleSheet, FlatList } from "react-native";
-import { DATA } from "../data";
-import { Post } from "../components/Post";
+import { PostList } from "../components/PostList";
+import { useDispatch, useSelector } from "react-redux";
+import { loadPosts } from "../store/reducers/post";
 
 export const MainScreen = ({ navigation }) => {
-  const openPostHandler = (post) => {
-    navigation.navigate("PostScreen", { postId: post.id, date: post.date });
-  };
+    const dispatch = useDispatch();
+    const state = useSelector(state => state.posts);
+    const allPosts = state.allPosts;
+    console.log('state', state);
 
-  return (
-    <View style={styles.wrapper}>
-      <FlatList
-        data={DATA}
-        keyExtractor={(post) => post.id.toString()}
-        renderItem={({ item }) => <Post post={item} onOpen={openPostHandler} />}
-      />
-    </View>
-  );
+    useEffect(() => {
+        dispatch(loadPosts());
+    }, [dispatch]);
+
+    return <PostList data={allPosts} navigation={navigation} />;
 };
-
-const styles = StyleSheet.create({
-  wrapper: {
-    padding: 10,
-  },
-});
